@@ -1,0 +1,44 @@
+.container {
+  margin-top: 24px;
+  padding-bottom: 32px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.searchField {
+  width: 200px;
+}
+
+.genreSelect {
+  width: 200px;
+}
+
+.sortSelect {
+  width: 200px;
+}
+
+.movieList {
+  display: flex;
+  justify-content: center;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 16px;
+  text-align: center;
+}

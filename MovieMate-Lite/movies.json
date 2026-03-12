@@ -1,0 +1,155 @@
+{
+  "movies": [
+    {
+      "id": "1",
+      "title": "Inception",
+      "rating": 8.8,
+      "genre": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "poster": "/images/Inception.jpg",
+      "year": 2010,
+      "watched": false
+    },
+    {
+      "id": "2",
+      "title": "Interstellar",
+      "rating": 8.6,
+      "genre": [
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "poster": "/images/Interstellar.jpg",
+      "year": 2014,
+      "watched": false
+    },
+    {
+      "id": "3",
+      "title": "The Dark Knight",
+      "rating": 9,
+      "genre": [
+        "Action",
+        "Crime",
+        "Drama"
+      ],
+      "poster": "/images/The Dark Knight.jpg",
+      "year": 2008,
+      "watched": false
+    },
+    {
+      "id": "4",
+      "title": "Fight Club",
+      "rating": 8.8,
+      "genre": [
+        "Drama"
+      ],
+      "poster": "/images/Fight Club.jpg",
+      "year": 1999,
+      "watched": false
+    },
+    {
+      "id": "5",
+      "title": "Pulp Fiction",
+      "rating": 8.9,
+      "genre": [
+        "Crime"
+      ],
+      "poster": "/images/Pulp Fiction.jpg",
+      "year": 1994,
+      "watched": false
+    },
+    {
+      "id": "8775",
+      "title": "Shawshank Redemption",
+      "year": 1994,
+      "rating": 9.3,
+      "poster": "/images/The Shawshank Redemption.jpg",
+      "genre": [
+        "Crime",
+        "Drama"
+      ]
+    },
+    {
+      "id": "db6f",
+      "title": "Kung Fu Panda",
+      "year": 2008,
+      "rating": 7.6,
+      "poster": "/images/Kung Fu Panda.jpg",
+      "genre": [
+        "Family",
+        "Comedy"
+      ],
+      "watched": false
+    }
+  ],
+  "admin": [
+    {
+      "id": "0d25"
+    },
+    {
+      "id": "d51a",
+      "email": "devvratrajeshp07@gmail.com",
+      "password": "362120",
+      "role": "admin",
+      "fullName": "Devvrat Pandey",
+      "phone": "7977988848",
+      "gender": "Male",
+      "location": "Mumbai",
+      "state": "MH",
+      "dob": "2001-09-25"
+    }
+  ],
+  "users": [
+    {
+      "id": "61c0",
+      "email": "dhruvrajeshp07@gmail.com",
+      "password": "113920",
+      "confirmPassword": "113920",
+      "role": "user",
+      "fullName": "Dhruv Pandey",
+      "phone": "7021527091",
+      "gender": "Male",
+      "location": "Mumbai",
+      "state": "Maharashtra",
+      "dob": "2001-03-06"
+    }
+  ],
+  "watchlists": [
+    {
+      "id": "a31f",
+      "userEmail": "dhruvrajeshp07@gmail.com",
+      "movies": [
+        {
+          "id": "5",
+          "title": "Pulp Fiction",
+          "rating": 8.9,
+          "genre": [
+            "Crime"
+          ],
+          "poster": "/images/Pulp Fiction.jpg",
+          "year": 1994,
+          "watched": false
+        }
+      ]
+    },
+    {
+      "id": "6d73",
+      "userEmail": "devvratrajeshp07@gmail.com",
+      "movies": [
+        {
+          "id": "4",
+          "title": "Fight Club",
+          "rating": 8.8,
+          "genre": [
+            "Drama"
+          ],
+          "poster": "/images/Fight Club.jpg",
+          "year": 1999,
+          "watched": false
+        }
+      ]
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

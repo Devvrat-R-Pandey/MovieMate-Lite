@@ -1,0 +1,11 @@
+/* Reset default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Font rendering — background handled by MUI CssBaseline */
+body {
+  font-family: Roboto, Arial, sans-serif;
+}
