@@ -131,3 +131,27 @@ MovieMate-Lite/
 When registering, you can select your role. Admin accounts get access to the `/add-movie` and `/analytics` routes.
 
 ---
+
+## 📸 Screenshots
+
+### Home Page --Light Mode
+<img width="1889" height="863" alt="image" src="https://github.com/user-attachments/assets/90a21c01-7e3c-41cb-ab02-9e3cfbb50df9" />
+
+### Home Page --Dark Mode
+<img width="1910" height="862" alt="image" src="https://github.com/user-attachments/assets/ca387e7f-9fb1-455c-9863-5f9816dd3928" />
+
+### Watchlist Page
+<img width="1912" height="863" alt="image" src="https://github.com/user-attachments/assets/9b15f7bf-ac1c-4e7e-850b-2f6bc55ee2b7" />
+
+### Analytics Page
+<img width="1910" height="864" alt="image" src="https://github.com/user-attachments/assets/be601c74-f213-4fec-a9b6-ce99cc0d38cd" />
+
+### User Profile Page
+<img width="1911" height="861" alt="image" src="https://github.com/user-attachments/assets/5523f87e-8b93-468e-828c-f07aa3a180a4" />
+
+### Add Movie Page
+<img width="1913" height="865" alt="image" src="https://github.com/user-attachments/assets/58df0480-e1c9-4f61-9fad-fde56eadc919" />
+
+
+
+
