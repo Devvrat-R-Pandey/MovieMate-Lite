@@ -85,15 +85,12 @@
   ],
   "admin": [
     {
-      "id": "0d25"
-    },
-    {
       "id": "d51a",
-      "email": "devvratrajeshp07@gmail.com",
-      "password": "362120",
+      "email": "admindemo@gmail.com",
+      "password": "123456",
       "role": "admin",
       "fullName": "Devvrat Pandey",
-      "phone": "7977988848",
+      "phone": "1234567890",
       "gender": "Male",
       "location": "Mumbai",
       "state": "MH",
@@ -103,53 +100,18 @@
   "users": [
     {
       "id": "61c0",
-      "email": "dhruvrajeshp07@gmail.com",
-      "password": "113920",
-      "confirmPassword": "113920",
+      "email": "userdemo@gmail.com",
+      "password": "123456",
+      "confirmPassword": "123456",
       "role": "user",
       "fullName": "Dhruv Pandey",
-      "phone": "7021527091",
+      "phone": "1234567890",
       "gender": "Male",
       "location": "Mumbai",
       "state": "Maharashtra",
       "dob": "2001-03-06"
     }
   ],
-  "watchlists": [
-    {
-      "id": "a31f",
-      "userEmail": "dhruvrajeshp07@gmail.com",
-      "movies": [
-        {
-          "id": "5",
-          "title": "Pulp Fiction",
-          "rating": 8.9,
-          "genre": [
-            "Crime"
-          ],
-          "poster": "/images/Pulp Fiction.jpg",
-          "year": 1994,
-          "watched": false
-        }
-      ]
-    },
-    {
-      "id": "6d73",
-      "userEmail": "devvratrajeshp07@gmail.com",
-      "movies": [
-        {
-          "id": "4",
-          "title": "Fight Club",
-          "rating": 8.8,
-          "genre": [
-            "Drama"
-          ],
-          "poster": "/images/Fight Club.jpg",
-          "year": 1999,
-          "watched": false
-        }
-      ]
-    }
-  ],
+  "watchlists": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
