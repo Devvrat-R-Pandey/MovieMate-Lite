@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import {
   Container, Box, Typography, Paper, Chip, Divider,
   TextField, Button, Alert, IconButton, InputAdornment, Collapse,
@@ -12,6 +12,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useAuth } from "../auth/AuthContext";
 import { useForm } from "react-hook-form";
 import type { UpdateProfileData } from "../auth/AuthContext";
+import profileReducer, { profileInitialState } from "../reducers/profileReducer";
 
 type DetailsForm = Omit<UpdateProfileData, "oldPassword" | "newPassword">;
 type PasswordForm = { oldPassword: string; newPassword: string };
@@ -28,13 +29,7 @@ const DetailRow = ({ label, value }: { label: string; value?: string | null }) =
 
 const ProfilePage = () => {
   const { user, updateProfile } = useAuth();
-
-  const [editingDetails, setEditingDetails] = useState(false);
-  const [editingPassword, setEditingPassword] = useState(false);
-  const [detailsStatus, setDetailsStatus] = useState<"success" | "error" | null>(null);
-  const [passwordStatus, setPasswordStatus] = useState<"success" | "wrong_password" | "error" | null>(null);
-  const [showOld, setShowOld] = useState(false);
-  const [showNew, setShowNew] = useState(false);
+  const [state, dispatch] = useReducer(profileReducer, profileInitialState);
 
   const detailsForm = useForm<DetailsForm>({
     defaultValues: {
@@ -62,11 +57,16 @@ const ProfilePage = () => {
     ? `${new Date(user.dob).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}${age ? ` · ${age} yrs` : ""}`
     : null;
 
-  const onSaveDetails = async (data: DetailsForm) => {
-    const result = await updateProfile({ ...data, oldPassword: "", newPassword: "" });
-    result === "success" ? setDetailsStatus("success") : setDetailsStatus("error");
-    if (result === "success") setEditingDetails(false);
-  };
+const onSaveDetails = async (data: DetailsForm) => {
+  const result = await updateProfile({ ...data, oldPassword: "", newPassword: "" });
+
+  if (result === "success") {
+    dispatch({ type: "DETAILS_SUCCESS" });
+    detailsForm.reset();
+  } else {
+    dispatch({ type: "DETAILS_ERROR" });
+  }
+};
 
   const onSavePassword = async (data: PasswordForm) => {
     const result = await updateProfile({
@@ -75,16 +75,19 @@ const ProfilePage = () => {
       state: user.state ?? "", dob: user.dob ?? "",
       oldPassword: data.oldPassword, newPassword: data.newPassword,
     });
-    setPasswordStatus(result);
-    if (result === "success") { passwordForm.reset(); setEditingPassword(false); }
+    if (result === "success") {
+      dispatch({ type: "PASSWORD_SUCCESS" });
+      passwordForm.reset();
+    } else if (result === "wrong_password") {
+      dispatch({ type: "PASSWORD_WRONG" });
+    } else {
+      dispatch({ type: "PASSWORD_ERROR" });
+    }
   };
 
   const handleCancelPassword = () => {
-    setEditingPassword(false);
-    setPasswordStatus(null);
+    dispatch({ type: "EDIT_PASSWORD_CANCEL" });
     passwordForm.reset();
-    setShowOld(false);
-    setShowNew(false);
   };
 
   const sf = { size: "small" as const, fullWidth: true, margin: "dense" as const };
@@ -104,12 +107,21 @@ const ProfilePage = () => {
               <Chip label={user.role === "admin" ? "Admin" : "User"} size="small" color={user.role === "admin" ? "secondary" : "primary"} sx={{ mt: 0.25, fontWeight: 600 }} />
             </Box>
             <Box display="flex" gap={1} flexShrink={0}>
-              {!editingDetails ? (
-                <Button size="small" startIcon={<EditIcon fontSize="small" />} onClick={() => { setEditingDetails(true); setDetailsStatus(null); }}>Edit</Button>
+              {!state.editingDetails ? (
+                <Button size="small" startIcon={<EditIcon fontSize="small" />}
+                  onClick={() => dispatch({ type: "EDIT_DETAILS_START" })}>
+                  Edit
+                </Button>
               ) : (
                 <>
-                  <Button size="small" color="inherit" startIcon={<CloseIcon fontSize="small" />} onClick={() => { setEditingDetails(false); setDetailsStatus(null); detailsForm.reset(); }}>Cancel</Button>
-                  <Button size="small" variant="contained" startIcon={<SaveIcon fontSize="small" />} onClick={detailsForm.handleSubmit(onSaveDetails)}>Save</Button>
+                  <Button size="small" color="inherit" startIcon={<CloseIcon fontSize="small" />}
+                    onClick={() => { dispatch({ type: "EDIT_DETAILS_CANCEL" }); detailsForm.reset(); }}>
+                    Cancel
+                  </Button>
+                  <Button size="small" variant="contained" startIcon={<SaveIcon fontSize="small" />}
+                    onClick={detailsForm.handleSubmit(onSaveDetails)}>
+                    Save
+                  </Button>
                 </>
               )}
             </Box>
@@ -117,10 +129,18 @@ const ProfilePage = () => {
 
           <Typography variant="subtitle2" fontWeight={700} color="text.secondary" mb={1}>PERSONAL INFO</Typography>
 
-          {detailsStatus === "success" && <Alert severity="success" sx={{ mb: 1 }} onClose={() => setDetailsStatus(null)}>Details updated successfully!</Alert>}
-          {detailsStatus === "error" && <Alert severity="error" sx={{ mb: 1 }} onClose={() => setDetailsStatus(null)}>Something went wrong. Try again.</Alert>}
+          {state.detailsStatus === "success" && (
+            <Alert severity="success" sx={{ mb: 1 }} onClose={() => dispatch({ type: "CLEAR_DETAILS_STATUS" })}>
+              Details updated successfully!
+            </Alert>
+          )}
+          {state.detailsStatus === "error" && (
+            <Alert severity="error" sx={{ mb: 1 }} onClose={() => dispatch({ type: "CLEAR_DETAILS_STATUS" })}>
+              Something went wrong. Try again.
+            </Alert>
+          )}
 
-          {!editingDetails ? (
+          {!state.editingDetails ? (
             <Box>
               <DetailRow label="Email" value={user.email} />
               <DetailRow label="Full Name" value={user.fullName} />
@@ -131,10 +151,15 @@ const ProfilePage = () => {
             </Box>
           ) : (
             <Box>
-              <TextField label="Full Name" required {...sf} {...detailsForm.register("fullName", { required: "Required", pattern: { value: /^[a-zA-Z\s]+$/, message: "Letters only" } })} error={!!detailsForm.formState.errors.fullName} helperText={detailsForm.formState.errors.fullName?.message} />
+              <TextField label="Full Name" required {...sf}
+                {...detailsForm.register("fullName", { required: "Required", pattern: { value: /^[a-zA-Z\s]+$/, message: "Letters only" } })}
+                error={!!detailsForm.formState.errors.fullName} helperText={detailsForm.formState.errors.fullName?.message} />
               <Box display="flex" gap={1}>
-                <TextField label="Phone" required {...sf} {...detailsForm.register("phone", { required: "Required", pattern: { value: /^[0-9]{10}$/, message: "10 digits" } })} error={!!detailsForm.formState.errors.phone} helperText={detailsForm.formState.errors.phone?.message} />
-                <TextField label="Date of Birth" type="date" {...sf} InputLabelProps={{ shrink: true }} {...detailsForm.register("dob")} />
+                <TextField label="Phone" required {...sf}
+                  {...detailsForm.register("phone", { required: "Required", pattern: { value: /^[0-9]{10}$/, message: "10 digits" } })}
+                  error={!!detailsForm.formState.errors.phone} helperText={detailsForm.formState.errors.phone?.message} />
+                <TextField label="Date of Birth" type="date" {...sf}
+                  InputLabelProps={{ shrink: true }} {...detailsForm.register("dob")} />
               </Box>
               <Box display="flex" gap={1}>
                 <TextField label="Gender" {...sf} {...detailsForm.register("gender")} />
@@ -152,26 +177,47 @@ const ProfilePage = () => {
               <LockIcon fontSize="small" sx={{ color: "text.secondary" }} />
               <Typography variant="subtitle2" fontWeight={700} color="text.secondary">CHANGE PASSWORD</Typography>
             </Box>
-            {!editingPassword ? (
-              <Button size="small" startIcon={<EditIcon fontSize="small" />} onClick={() => { setEditingPassword(true); setPasswordStatus(null); }}>Edit</Button>
+            {!state.editingPassword ? (
+              <Button size="small" startIcon={<EditIcon fontSize="small" />}
+                onClick={() => dispatch({ type: "EDIT_PASSWORD_START" })}>
+                Edit
+              </Button>
             ) : (
               <Box display="flex" gap={1}>
-                <Button size="small" color="inherit" startIcon={<CloseIcon fontSize="small" />} onClick={handleCancelPassword}>Cancel</Button>
-                <Button size="small" variant="contained" startIcon={<SaveIcon fontSize="small" />} onClick={passwordForm.handleSubmit(onSavePassword)}>Save</Button>
+                <Button size="small" color="inherit" startIcon={<CloseIcon fontSize="small" />}
+                  onClick={handleCancelPassword}>
+                  Cancel
+                </Button>
+                <Button size="small" variant="contained" startIcon={<SaveIcon fontSize="small" />}
+                  onClick={passwordForm.handleSubmit(onSavePassword)}>
+                  Save
+                </Button>
               </Box>
             )}
           </Box>
 
-          <Collapse in={editingPassword}>
+          <Collapse in={state.editingPassword}>
             <Box mt={1.5}>
-              {passwordStatus === "success" && <Alert severity="success" sx={{ mb: 1 }} onClose={() => setPasswordStatus(null)}>Password changed!</Alert>}
-              {passwordStatus === "wrong_password" && <Alert severity="error" sx={{ mb: 1 }} onClose={() => setPasswordStatus(null)}>Old password is incorrect.</Alert>}
-              {passwordStatus === "error" && <Alert severity="error" sx={{ mb: 1 }} onClose={() => setPasswordStatus(null)}>Something went wrong.</Alert>}
+              {state.passwordStatus === "success" && (
+                <Alert severity="success" sx={{ mb: 1 }} onClose={() => dispatch({ type: "CLEAR_PASSWORD_STATUS" })}>
+                  Password changed!
+                </Alert>
+              )}
+              {state.passwordStatus === "wrong_password" && (
+                <Alert severity="error" sx={{ mb: 1 }} onClose={() => dispatch({ type: "CLEAR_PASSWORD_STATUS" })}>
+                  Old password is incorrect.
+                </Alert>
+              )}
+              {state.passwordStatus === "error" && (
+                <Alert severity="error" sx={{ mb: 1 }} onClose={() => dispatch({ type: "CLEAR_PASSWORD_STATUS" })}>
+                  Something went wrong.
+                </Alert>
+              )}
 
               <Box display="flex" gap={1}>
                 {[
-                  { label: "Old Password", key: "oldPassword" as const, show: showOld, toggle: () => setShowOld(!showOld) },
-                  { label: "New Password", key: "newPassword" as const, show: showNew, toggle: () => setShowNew(!showNew) },
+                  { label: "Old Password", key: "oldPassword" as const, show: state.showOld, toggle: () => dispatch({ type: "TOGGLE_SHOW_OLD" }) },
+                  { label: "New Password", key: "newPassword" as const, show: state.showNew, toggle: () => dispatch({ type: "TOGGLE_SHOW_NEW" }) },
                 ].map(({ label, key, show, toggle }) => (
                   <TextField key={key} label={label} type={show ? "text" : "password"} {...sf}
                     {...passwordForm.register(key, { required: "Required", ...(key === "newPassword" ? { minLength: { value: 6, message: "Min 6 chars" } } : {}) })}
